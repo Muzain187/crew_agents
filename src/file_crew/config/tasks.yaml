@@ -1,0 +1,76 @@
+source_extractor:
+  description: >
+    Conduct a thourough research on finding the file name for uploaded file
+    keeping it as source_name and generating the payload
+  expected_output: >
+    generate an json were it can fetch the sourceName as uploaded file name with no extension
+    ```json
+    {
+      "entities": [
+          {
+          "entity": "source",
+          "parameters": {
+            "active": "Y",
+            "deletedIndex": "-1",
+            "referenceId": "",
+            "sourceDesc": "test_source",
+            "sourceName": "test_source"
+          }
+        }
+      ]
+    }
+
+    ```
+  agent: source_fields
+
+source_fields_extractor:
+  description: >
+    Conduct a thourough research on finding the column headers and datatype associated with that for uploaded file
+    keeping it as sourceName: name of the file,fieldName is the column header,fieldType is type of column header
+    you have to create multiple source_configuration based on no.of column header
+  expected_output: >
+    generate an json were it can fetch the sourceName as uploaded file name with no extension
+    here sourceName: name of the file,fieldName is the column header,fieldType is type of column header
+    you have to create multiple source_configuration based on no.of column header [opwa]
+    combine the result of `source_extractor` final output.
+    ```json
+    {
+      "entities": [
+        {
+          "entity": "source_field_settings",
+          "method": "PUT",
+          "parameters": {
+            "currency": "",
+            "fileFormat": "Flat",
+            "idField": "",
+            "isManualActions": "N",
+            "isManualEditsAllowed": "N",
+            "isManualItemsAllowed": "N",
+            "isSplitSource": "N",
+            "isUpdatesAllowed": "N",
+            "isUploadActions": "N",
+            "sourceName": "<sourceName>",
+            "sourceRefId": "",
+            "subAccount": ""
+          }
+        },
+        {
+          "entity": "source_configuration",
+          "method": "POST",
+          "parameters": {
+            "active": "Y",
+            "ddIndex": 1,
+            "displayName": "<fieldName>",
+            "fieldName": "<fieldName>",
+            "fieldType": "<fieldType>",
+            "nestedFieldName": "",
+            "origin": "source",
+            "sourceName": "<sourceName>",
+            "sourceRefId": ""
+          }
+        }
+      ]
+    }
+
+    ```
+  agent: source_fields
