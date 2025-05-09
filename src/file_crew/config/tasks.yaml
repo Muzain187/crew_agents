@@ -1,76 +1,103 @@
 source_extractor:
   description: >
-    Conduct a thourough research on finding the file name for uploaded file
-    keeping it as source_name and generating the payload
+    Conduct a thourough research on finding the file name for uploaded file under uploaded_files folder.
+    i need output which is like Create 2 sources filename1,filename2
+    here 2 represent no.of files under the uploaded_files folder
+    exclude the extension from the csv files need only name
   expected_output: >
-    generate an json were it can fetch the sourceName as uploaded file name with no extension
-    ```json
-    {
-      "entities": [
-          {
-          "entity": "source",
-          "parameters": {
-            "active": "Y",
-            "deletedIndex": "-1",
-            "referenceId": "",
-            "sourceDesc": "test_source",
-            "sourceName": "test_source"
-          }
-        }
-      ]
-    }
-
-    ```
+    generate the text
+    Ex: Create 2 sources Blotter and TP
+    
   agent: source_fields
 
 source_fields_extractor:
   description: >
-    Conduct a thourough research on finding the column headers and datatype associated with that for uploaded file
-    keeping it as sourceName: name of the file,fieldName is the column header,fieldType is type of column header
-    you have to create multiple source_configuration based on no.of column header
-  expected_output: >
-    generate an json were it can fetch the sourceName as uploaded file name with no extension
-    here sourceName: name of the file,fieldName is the column header,fieldType is type of column header
-    you have to create multiple source_configuration based on no.of column header [opwa]
-    combine the result of `source_extractor` final output.
-    ```json
-    {
-      "entities": [
-        {
-          "entity": "source_field_settings",
-          "method": "PUT",
-          "parameters": {
-            "currency": "",
-            "fileFormat": "Flat",
-            "idField": "",
-            "isManualActions": "N",
-            "isManualEditsAllowed": "N",
-            "isManualItemsAllowed": "N",
-            "isSplitSource": "N",
-            "isUpdatesAllowed": "N",
-            "isUploadActions": "N",
-            "sourceName": "<sourceName>",
-            "sourceRefId": "",
-            "subAccount": ""
-          }
-        },
-        {
-          "entity": "source_configuration",
-          "method": "POST",
-          "parameters": {
-            "active": "Y",
-            "ddIndex": 1,
-            "displayName": "<fieldName>",
-            "fieldName": "<fieldName>",
-            "fieldType": "<fieldType>",
-            "nestedFieldName": "",
-            "origin": "source",
-            "sourceName": "<sourceName>",
-            "sourceRefId": ""
-          }
-        }
-      ]
-    }
+    Conduct a thourough research on finding the file name for uploaded file under uploaded_files folder.
+    understand the each csv files under uploaded_files and generate output.
+    were i need output which contains something like this
+    Create source fields for <file_name>
+    <column_header1> as <data_type>,
+    <column_header2> as <data_type>,
+    <column_header3> as <data_type>
+    ....
 
-    ```
+    here the filename that is under uploaded_files 
+    and below are the column header and their corresponding DATA_TYPE
+    the DATA_TYPE should be:
+    BOOLEAN
+    DATE
+    DATE TIME
+    STRING
+    NUMERIC
+  expected_output: >
+    generate the text
+    Ex: 
+    Create source fields for <file_name>
+    <column_header1> as <data_type1>,
+    <column_header2> as <data_type2>,
+    <column_header3> as <data_type3>,
+    ....
+    
   agent: source_fields
+
+recon_creator:
+  description: >
+    create a recon using the tool  uuid ex: recon_142578852125
+    type should be custom recon and  if uploaded_files folder is having more than one file then side1 and side2
+    if uploaded_files folder is having only one file then only side1
+
+  expected_output: >
+    generate the text
+    Ex: Create recon <recon_name> type custom recon and side side1 and side2
+
+    Here <recon_name> should be unique starting with recon_
+    ex: recon_142578852125
+    
+  agent: source_fields
+
+
+recon_field_creator:
+  description: >
+    create a recon fields using source1 (which is created in source_fields_extractor task)
+    were i need the output whcih looks like this
+    Create recon fields similar to source1 <filename> 
+    Trade ID as String,
+    Trade Date as Date,
+    Settlement Date as Date,
+    Fund as String,
+    ISIN as String,
+    Quantity as Numeric, 	
+    Price as Numeric,
+    Amount as Numeric
+    
+    were <filename> is the first filename that is under uploaded_files
+    and the fields are taken from the <filename>
+
+  expected_output: >
+    generate the text
+    Ex: Create recon fields similar to source1 <filename>
+    Trade ID as String,
+    Trade Date as Date,
+    Settlement Date as Date,
+    Fund as String,
+    ISIN as String,
+    Quantity as Numeric, 	
+    Price as Numeric,
+    Amount as Numeric
+
+    Here <filename> should be the name under uploaded_files
+    were <filename> is the first filename that is under uploaded_files
+    and the fields are taken from the <filename>
+    
+  agent: source_fields
+
+
+task_executor:
+  description: >
+    Execute the task that are defined under output_files
+    task1.txt,task2.txt,task3.txt and task4.txt
+
+  expected_output: >
+    generate the output that got from tools
+    
+  agent: source_executor

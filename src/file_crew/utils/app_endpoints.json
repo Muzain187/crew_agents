@@ -1,0 +1,38 @@
+{
+  "create": {
+    "source": {
+      "url": "http://18.206.131.186:8083/api/recon/source-configuration",
+      "method": "POST",
+      "description": "Create a new source.",
+      "body": {
+        "sourceName": "string"
+      }
+    },
+    "source_configuration": {
+      "url": "http://18.206.131.186:8083/api/recon/data-dictionary",
+      "method": "POST",
+      "description": "Create a new field.",
+      "body": {
+        "sourceName": "string",
+        "fieldName": "string"
+      }
+    },
+    "source_field_settings": {
+      "url": "http://18.206.131.186:8083/api/recon/source-configuration/settings",
+      "method": "PUT",
+      "description": "Disable the settings.",
+      "body": {
+        "sourceName": "string"
+      }
+    }
+  },
+  "read" : {
+        "reference_id" : {
+            "url": "http://127.0.0.1:8001/engine/ref-ids",
+            "method": "POST",
+            "description": "Get a existing name ref_id."
+        }
+    }
+}
+
+
