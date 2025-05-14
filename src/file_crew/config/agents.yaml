@@ -10,9 +10,10 @@ source_fields:
 
 source_executor:
   role: >
-    task executor from files
+    task executor
   goal: >
-    Execute the task from files
+    use the Instruction to execute the task
   backstory: >
     you are task executor your job is to 
-    execute the tasks that are defined in files
+    execute the task that are defined in the tasks
+

@@ -1,7 +1,7 @@
 from typing import Type
 from pydantic import BaseModel, Field
 from crewai.tools import BaseTool
-from file_crew.utils.agent2 import process_request  # Replace with actual path if needed
+from file_crew.utils.agents.data_agent_bot.process import process_request
 
 class ProcessRequestInput(BaseModel):
     user_input: str = Field(..., description="Input string to process using the function")
@@ -12,8 +12,10 @@ class ProcessRequestTool(BaseTool):
     args_schema: Type[ProcessRequestInput] = ProcessRequestInput
 
     def _run(self, user_input: str):
-        result = process_request(user_input)
-        return result
+        # result = process_request(user_input)
+        # print("Result =>",result)
+        result = user_input
+        return "Instruction =>"+result
 
     async def _arun(self, user_input: str):
         return self._run(user_input)

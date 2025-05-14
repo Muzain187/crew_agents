@@ -1,0 +1,1 @@
+Create recon fields similar to source1 reconssss.csv Trade ID as String, Trade Date as Date, Settlement Date as Date, Fund as String, ISIN as String, Quantity as Numeric, Price as Numeric, Amount as Numeric

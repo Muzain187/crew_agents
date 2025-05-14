@@ -92,12 +92,43 @@ recon_field_creator:
   agent: source_fields
 
 
-task_executor:
+task_executor_1:
   description: >
-    Execute the task that are defined under output_files
-    task1.txt,task2.txt,task3.txt and task4.txt
-
+    Use the output generated from source_extractor
   expected_output: >
-    generate the output that got from tools
+    generate the output
     
   agent: source_executor
+
+# task_executor_2:
+#   description: >
+#     Execute the task 
+#     source_fields_extractor.txt under file_crew/output_files/ folder
+#     take the information under source_fields_extractor.txt only  and use that as the user_input to the ProcessRequestTool
+
+#   expected_output: >
+#     generate the output that got from ProcessRequestTool from the source_fields_extractor.txt information
+    
+#   agent: source_executor
+
+# task_executor_3:
+#   description: >
+#     Execute the task 
+#     recon_creator.txt under file_crew/output_files/ folder
+#     take the information under recon_creator.txt only  and use that as the user_input to the ProcessRequestTool
+
+#   expected_output: >
+#     generate the output that got from ProcessRequestTool from the recon_creator.txt information
+    
+#   agent: source_executor
+
+# task_executor_4:
+#   description: >
+#     Execute the task 
+#     recon_field_creator.txt under file_crew/output_files/ folder
+#     take the information under recon_field_creator.txt only  and use that as the user_input to the ProcessRequestTool
+
+#   expected_output: >
+#     generate the output that got from ProcessRequestTool from the recon_field_creator.txt information
+    
+#   agent: source_executor

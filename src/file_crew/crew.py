@@ -6,7 +6,7 @@ from file_crew.models import *
 from file_crew.tools.custom_tool import CSVMetadataTool
 from file_crew.tools.recon_tool import ReconIDGeneratorTool
 from file_crew.tools.task_exec_tool import ProcessRequestTool
-from file_crew.utils import agent2 as AGENT
+# from file_crew.utils import agent2 as AGENT
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -17,6 +17,7 @@ process_tool = ProcessRequestTool()
 
 # file_tool = FileReadTool(file_path="D:\\AI_agents\\file_crew\\src\\file_crew\\payload_dataset.csv")
 file_read_tool = FileReadTool()
+source_extractor_file = FileReadTool("D:\\AI_AGENTS\\crew_agents\\src\\file_crew\\output_files\\source_extractor.txt")
 csv_tool = CSVSearchTool(
     config=dict(
         llm=dict(
@@ -118,7 +119,7 @@ class FileCrew():
     def source_executor(self) -> Agent:
         return Agent(
             config=self.agents_config['source_executor'],
-            tools=[directory_search_tool2,file_read_tool,process_tool],
+            cache=False,
             # allow_code_execution=True,
             # code_execution_mode="unsafe",
             verbose=True
@@ -132,7 +133,7 @@ class FileCrew():
         return Task(
             config=self.tasks_config['source_extractor'],
             callback=callback_function,
-            output_file="output_files\\task1.txt"
+            output_file="src\\file_crew\\output_files\\source_extractor.txt"
             # output_json=EntitiesContainer,
             # callback=ut.call_endpoint,
             # human_input=True
@@ -146,7 +147,7 @@ class FileCrew():
             # output_json=EntitiesContainer,
             # callback=ut.call_endpoint,
             callback=callback_function,
-            output_file="output_files\\task2.txt"
+            output_file="src\\file_crew\\output_files\\source_fields_extractor.txt"
         )
     
     @task
@@ -154,7 +155,7 @@ class FileCrew():
         return Task(
             config=self.tasks_config['recon_creator'],
             callback=callback_function,
-            output_file="output_files\\task3.txt"
+            output_file="src\\file_crew\\output_files\\recon_creator.txt"
             # context=[self.source_extractor()],
             # output_json=EntitiesContainer,
             # callback=ut.call_endpoint,
@@ -166,16 +167,45 @@ class FileCrew():
         return Task(
             config=self.tasks_config['recon_field_creator'],
             callback=callback_function,
-            output_file="output_files\\task4.txt",
+            output_file="src\\file_crew\\output_files\\recon_field_creator.txt",
             context=[self.source_fields_extractor()],
             # human_input=True
         )
     
     @task
-    def task_executor(self) -> Task:
+    def task_executor_1(self) -> Task:
         return Task(
-            config=self.tasks_config['task_executor']
+            config=self.tasks_config['task_executor_1'],
+            context=[self.source_extractor()],
+            tools=[source_extractor_file,process_tool],
+            human_input=True
         )
+    # @task
+    # def task_executor_2(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['task_executor_2'],
+    #         context=[self.source_fields_extractor()],
+    #         human_input=True
+
+    #     )
+    # @task
+    # def task_executor_3(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['task_executor_3'],
+    #         context=[self.recon_creator()],
+    #         human_input=True
+
+
+    #     )
+    # @task
+    # def task_executor_4(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['task_executor_4'],
+    #         context=[self.recon_field_creator()],
+    #         human_input=True
+
+
+    #     )
 
 
     @crew

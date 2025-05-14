@@ -1,0 +1,2 @@
+Create source fields for payload_dataset.csv Row as STRING,Column1 as NUMERIC,Column2 as NUMERIC,Column3 as NUMERIC,Column4 as NUMERIC,Column5 as NUMERIC
+Create source fields for sample.csv Row as STRING,Column1 as NUMERIC,Column2 as NUMERIC,Column3 as NUMERIC,Column4 as NUMERIC,Column5 as NUMERIC
