@@ -177,7 +177,7 @@ class FileCrew():
         return Task(
             config=self.tasks_config['task_executor_1'],
             context=[self.source_extractor()],
-            tools=[source_extractor_file,process_tool],
+            tools=[process_tool],
             human_input=True
         )
     # @task
