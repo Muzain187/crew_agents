@@ -43,15 +43,17 @@ source_fields_extractor:
 recon_creator:
   description: >
     create a recon using the tool  uuid ex: recon_142578852125
-    type should be custom recon and  if uploaded_files folder is having more than one file then side1 and side2
-    if uploaded_files folder is having only one file then only side1
+    type should be custom recon and  if uploaded_files folder is having more than one file then <side_name1> and <side_name2>
+    if uploaded_files folder is having only one file then only <side_name1>
 
   expected_output: >
     generate the text
-    Ex: Create recon <recon_name> type custom recon and side side1 and side2
+    Ex: Create recon <recon_name> type custom recon and side <side_name1> and <side_name2>
 
     Here <recon_name> should be unique starting with recon_
+    also <side_name1> and <side_name1> are unique name stating with side_
     ex: recon_142578852125
+        side_123
     
   agent: source_fields
 
@@ -75,22 +77,94 @@ recon_field_creator:
 
   expected_output: >
     generate the text
-    Ex: Create recon fields similar to source1 <filename>
-    Trade ID as String,
-    Trade Date as Date,
-    Settlement Date as Date,
-    Fund as String,
-    ISIN as String,
-    Quantity as Numeric, 	
-    Price as Numeric,
-    Amount as Numeric
+    Ex: Create recon fields for <recon_name>
+    <column_header1> as <data_type1>,
+    <column_header2> as <data_type2>,
+    <column_header3> as <data_type3>,
+    ....
 
-    Here <filename> should be the name under uploaded_files
-    were <filename> is the first filename that is under uploaded_files
-    and the fields are taken from the <filename>
+    Here <recon_name> is generated previously
+    and column_header and data_type should be taken from 1st file
     
   agent: source_fields
 
+recon_field_summay:
+  description: >
+    For the given "{user_input}"
+    fetch the column header names under uploaded_files and thier respective datatype
+    if "{user_input}" contains "match on":
+      fetch the column headers value given by the user 
+      and add it under Group By
+
+    if "{user_input}" contains "compare"
+      fetch the column header value and their datatype given by the user
+      and add it under compare values/compare status (if column header data type is Boolean)  
+ 
+
+  expected_output: >
+    generate the text
+    For recon <recon_name> of side <side_name1>,<sidename2>, Map recon fields summary for 
+    <column header1> as <Group By> 
+    <column header2> as <compare values> 
+    <column header3> as <compare values>
+    <column header4> as <compare status>
+    ....
+
+    here <recon_name> is something created in earlier task
+    <sidename1> and <sidename2> are the sides which are mention in the previous tasks.
+    <column headers> are taken from the files that are under uploaded_files  
+  agent: source_fields
+
+map_source_recon:
+  description: >
+    Map the sources were,
+    sources that is nothing but the file names under uploaded_files without file extension,
+    recon_name that is generated earlier and sides   
+ 
+  expected_output: >
+    generate the text
+    Map sources <source_name1>, <source_name2> to recon <recon_name> with side <side1> <side2>
+
+    here <source_name> are taken from the file_name with no extension,<recon_name> is something created in earlier task
+    <sidename1> and <sidename2> are the sides which are mention in the previous tasks. 
+  agent: source_fields
+
+matching_rule:
+  description: >
+    For the given "{user_input}"
+    create a Rule having information on sides and adding the matching conditions based on the 'match on' on column-headers
+    add match condintion only for the column which are under 'match on' in "{user_input}"
+ 
+  expected_output: >
+    Create Matching Rule <rule_name>
+    For Matching rule <rule_name> create a rule of type TwoSide with match status set to MATCHED. 
+    Select Side One as <side_name1> and Side Two as <side_name2>. 
+    Add a matching condition for <colum-header>
+    
+    with the match type set to Equal for recon <recon_name>  
+
+    here <rule_name> is something uniqueId (based on DATETIME) generated rule_DATETIME,
+    <side_names> are generated previously,
+    <column-headers> are take from "{user_input}" under "match on" statement,
+    <recon_name> is take from earlier tasks.  
+  
+  agent: source_fields
+
+event_creation:
+  description: >
+    For the given "{user_input}"
+    create an Event E_randnumber(3 digits)
+    using the recon_name  created earlier
+ 
+  expected_output: >
+    generate text
+    Create event <event_name> for recon <recon_name>
+    Set event <event_name> for every 5 minutes.
+
+    here <event_name> is unique name starig with E_ and 3 digit randomn number ex: E_002
+    and <recon_name> is something is created earlier
+  
+  agent: source_fields
 
 task_executor_1:
   description: >
@@ -100,35 +174,58 @@ task_executor_1:
     
   agent: source_executor
 
-# task_executor_2:
-#   description: >
-#     Execute the task 
-#     source_fields_extractor.txt under file_crew/output_files/ folder
-#     take the information under source_fields_extractor.txt only  and use that as the user_input to the ProcessRequestTool
+task_executor_2:
+  description: >
+    Understand the source_fields_extractor  
+  expected_output: >
+    generate the output
 
-#   expected_output: >
-#     generate the output that got from ProcessRequestTool from the source_fields_extractor.txt information
+  agent: source_executor
+
+task_executor_3:
+  description: >
+    Understand the recon_creator  
+  expected_output: >
+    generate the output
     
-#   agent: source_executor
+  agent: source_executor
 
-# task_executor_3:
-#   description: >
-#     Execute the task 
-#     recon_creator.txt under file_crew/output_files/ folder
-#     take the information under recon_creator.txt only  and use that as the user_input to the ProcessRequestTool
-
-#   expected_output: >
-#     generate the output that got from ProcessRequestTool from the recon_creator.txt information
+task_executor_4:
+  description: >
+    Understand the recon_field_creator  
+  expected_output: >
+    generate the output
     
-#   agent: source_executor
+  agent: source_executor
 
-# task_executor_4:
-#   description: >
-#     Execute the task 
-#     recon_field_creator.txt under file_crew/output_files/ folder
-#     take the information under recon_field_creator.txt only  and use that as the user_input to the ProcessRequestTool
-
-#   expected_output: >
-#     generate the output that got from ProcessRequestTool from the recon_field_creator.txt information
+task_executor_5:
+  description: >
+    Understand the recon_field_summay  
+  expected_output: >
+    generate the output
     
-#   agent: source_executor
+  agent: source_executor
+
+task_executor_6:
+  description: >
+    Understand the map_source_recon  
+  expected_output: >
+    generate the output
+    
+  agent: source_executor
+
+task_executor_7:
+  description: >
+    Understand the matching_rule  
+  expected_output: >
+    generate the output
+    
+  agent: source_executor
+
+task_executor_8:
+  description: >
+    Understand the event_creation  
+  expected_output: >
+    generate the output
+    
+  agent: source_executor

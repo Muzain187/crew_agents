@@ -18,8 +18,7 @@ def run():
     Run the crew.
     """
     inputs = {
-        'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
+        'user_input': 'match on Trade_Id ,compare Quantity,Price and Amount'
     }
     
     try:

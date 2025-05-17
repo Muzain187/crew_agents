@@ -1,0 +1,1 @@
+Create Matching Rule rule_20250517_202516 For Matching rule rule_20250517_202516 create a rule of type TwoSide with match status set to MATCHED.  Select Side One as side_reconR03 and Side Two as side_sourceS03.  Add a matching condition for Trade_Id with the match type set to Equal for recon recon_20250517_202516

@@ -1,0 +1,1 @@
+For recon recon_20250517_202516 of side side_reconR03,side_sourceS03, Map recon fields summary for  Trade ID as Group By Trade Date as compare values Settlement Date as compare values Fund as compare values ISIN as compare values Quantity as compare values Price as compare values Amount as compare values
