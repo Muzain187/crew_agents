@@ -9,6 +9,11 @@ from file_crew.utils.common.config import apikey_config,LLMModel
 import google.generativeai as genai
 genai.configure(api_key=apikey_config.GOOGLE_API_KEY)
 
+logging.basicConfig(
+    filename="agent_chat.log",
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
 def generate_prompt(user_input):
     """Generates and parses a JSON response from a model based on user input."""
     followup_prompt = prompt_enginnering(
@@ -81,4 +86,3 @@ def process_request(user_input):
             "error": str(e),
             "logs": logs
         }
-

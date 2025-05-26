@@ -22,6 +22,7 @@ def names_refid_collecting(name_holding):
     logging.info(f"------------> Final reference IDs collected: {ref_id_holding}")
     return ref_id_holding
 
+# def request_worker(operation, entity, parameter, url, method):
 def request_worker(operation, entity, parameter, url, method,token):
     """Sends an HTTP request based on operation, entity, and method using provided parameters and endpoint configuration.
     Return the corresponding recon, source and fields to fetch the reference Ids"""
@@ -38,9 +39,21 @@ def request_worker(operation, entity, parameter, url, method,token):
             if operation in "read":
                 url = endpoint["url"]
                 method = endpoint["method"]
-                headers = {"X-Access-Token": token}
-            else:
-                headers = {"X-Access-Token": token}
+                # headers = {"X-Access-Token": token}
+            elif url is None and method is None and entity in ["get_summary_ref_id","side_ref_id",'get_rule_ref_id',
+                                                               "get_matching_condition","matching_rule_type_fetching","match_status"]:
+            # elif url is None and method is None and operation in ["create","update"]:
+                url= endpoint["url"]
+                if entity in ["get_rule_ref_id" , "get_summary_ref_id","side_ref_id"]:
+                    url = f'{url}{parameter}'
+                    logging.info(f"-------------->recon name updation id url test:{url}")
+                    parameter={"reconName":parameter}
+                # elif entity == "get_summary_ref_id":
+                #     parameter = {"reconName":parameter}
+                elif entity == "matching_rule_type_fetching":
+                    parameter = {"dropdownType": "matching_rule_type"}
+                method = endpoint["method"]
+            headers = {"X-Access-Token": token}
 
             logging.info(
                 f"request-worker -> URL: {url}, Method: {method}, Entity: {entity}, Operation: {operation}, "
@@ -59,7 +72,8 @@ def request_worker(operation, entity, parameter, url, method,token):
             logging.info(f"Response Status: {response.status_code}")
             logging.info(f"Response Body: {response.text}")
             final_ref_id_holding = None
-            if entity != "reference_id":
+            # if entity != "reference_id" and entity != "get_summary_ref_id":
+            if entity not in ["reference_id", "get_summary_ref_id","side_ref_id","get_rule_ref_id", "get_matching_condition","matching_rule_type_fetching","match_status"]:
                 if response.status_code in [200, 201]:  # success
                     name = {}
                     final_ref_id_holding = []
@@ -89,6 +103,12 @@ def request_worker(operation, entity, parameter, url, method,token):
                         name["summary_side"] = [item["label"] for item in parameter["summary_side"]]
                         name["reconName"] = parameter['reconName']
                         logging.info(f"-------->recon side configure updated : {name}")
+                        ref_id = names_refid_collecting(name)
+                        final_ref_id_holding.extend(ref_id)
+                    if entity == "matching_rule_name" and parameter.get("matchingRuleName"):
+                        name["matchingRuleName"] = parameter["matchingRuleName"]
+                        name["reconName"] = parameter["reconName"]
+                        logging.info(f"-------------> matching rule name updated: {name}")
                         ref_id = names_refid_collecting(name)
                         final_ref_id_holding.extend(ref_id)
                 return response.json(), final_ref_id_holding

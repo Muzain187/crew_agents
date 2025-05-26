@@ -1,1 +1,1 @@
-Create recon fields for recon_20250517_202516 Trade ID as STRING, Trade Date as DATE, Settlement Date as DATE, Fund as STRING, ISIN as STRING, Quantity as NUMERIC, Price as NUMERIC, Amount as NUMERIC
+Create recon fields for TempReconR03 Trade Number as STRING, Trade Date as STRING, Settlement Date as STRING, Fund as STRING, ISIN as STRING, Quantity as STRING, Price as STRING, Amount as STRING

@@ -1,7 +1,7 @@
 from loguru import logger
 from copy import deepcopy
 from file_crew.utils.agents.data_agent_bot.validators import (ensure_all_fields_present, modifying_recon_source_ids,\
-                            normalize_final_ref_id_holding,create_lookup)
+                            normalize_final_ref_id_holding,create_lookup,summary_updation,matching_condition_update,update_reconRefId)
 from file_crew.utils.agents.data_agent_bot.mapping_generation import (update_recon_source_selected,group_fields_by_ref,enrich_mapping_blocks,\
                                                                  payload_hash_value_creator,update_ref_id_from_mapping)
 from file_crew.utils.agents.data_agent_bot.sending_request import names_refid_collecting
@@ -197,6 +197,92 @@ def endpoint_worker(payloads):
                 # payload_exist_check = payload_hash_value_creator(item)
                 request_sending, name_holding = assigning_value(item, operation)
                 logging.info(f"-------> request_sending and name holding response:{request_sending}, {name_holding}")
+            if entity == "matching_rule_name" and operation in ["create"]:
+                required_fields= ["matchingRuleName","reconName"]
+                params = ensure_all_fields_present(entity_parameters, required_fields, entity)
+                request_sending, name_holding = assigning_value(item, operation)
+                final_ref_id_holding.extend(name_holding)
+                logging.info(f"Fetched recon or source reference ID for {request_sending}: {final_ref_id_holding}")
+            if entity == "recon_summary" and operation in ["create","update"]:
+                required_fields = ["reconName"]
+                params = ensure_all_fields_present(entity_parameters, required_fields, entity)
+                logging.info(f"=============> entity_parameters:{entity_parameters}")
+                recon_name = entity_parameters[0]["reconName"]
+                logging.info(f"----------->{recon_name}:recon name formatting")
+                entity_name = "get_summary_ref_id"
+                recon_field_map_ref_id = request_worker(operation, entity_name, recon_name, None, None,access_token.token)
+                # logging.info(f"===========>recon_field_map_ref_id:{recon_field_map_ref_id[0]['data']}")
+                show_in_summary = summary_updation(recon_field_map_ref_id[0]["data"],entity_parameters,entity_name)
+                logging.info(f"===========>recon_field_map_ref_id show in summary:{json.dumps(show_in_summary, indent=4)}")
+                entity_side_name = "side_ref_id"
+                recon_side_ref_id = request_worker(operation, entity_side_name, recon_name, None, None,access_token.token)
+                # logging.info(f"===========>recon_side_ref_id:{json.dumps(recon_side_ref_id, indent=4)}")
+                show_in_side = summary_updation(recon_side_ref_id[0]["data"],entity_parameters,entity_side_name)
+                logging.info(f"===========>recon_field_map_ref_id show in side:{json.dumps(show_in_side, indent=4)}")
+                request_sending, name_holding = assigning_value(item, operation)
+                # final_ref_id_holding.extend(name_holding)
+                logging.info(f"Fetched recon or source reference ID for {request_sending}")
+            if entity == "twoside_condition" and operation in ["create"]:
+                required_fields = ["reconName", "sourceName", "targetName", "matchingRuleName"]
+                params = ensure_all_fields_present(entity_parameters, required_fields, entity)
+                recon_name = entity_parameters[0]["reconName"]
+                logging.info(f"----------->{recon_name}:recon name formatting")
+                entity_name = "get_rule_ref_id"
+                get_recon_rule_ref_id = request_worker(operation, entity_name, recon_name, None, None,
+                                                       access_token.token)
+                entity_name_matching = "get_matching_condition"
+                get_matching_condition = request_worker(operation, entity_name_matching, None, None, None,
+                                                        access_token.token)
+                logging.info(
+                    f"------------>get_matching_condition response:{json.dumps(get_matching_condition, indent=4)}")
+                entity_field_map_name = "get_summary_ref_id"
+                operation_data = "update"
+                recon_field_map_ref_id = request_worker(operation_data, entity_field_map_name, recon_name, None, None,
+                                                        access_token.token)
+                entity_matching_rule_type = "matching_rule_type_fetching"
+                match_rule_type_fetching = request_worker(operation, entity_matching_rule_type, None, None, None,
+                                                          access_token.token)
+                entity_matching_status = "match_status"
+                match_status_fetching = request_worker(operation, entity_matching_status, None, None, None,
+                                                       access_token.token)
+                def unwrap_singleton_tuple(value):
+                    if isinstance(value, tuple):
+                        return value[0]
+                    return value
+                get_matching_condition = unwrap_singleton_tuple(get_matching_condition)
+                logging.info(f"------------>get_matching_condition:{type(get_matching_condition)}")
+                logging.info(f"===========>get_matching_condition:{json.dumps(get_matching_condition, indent=4)}")
+                recon_field_map_ref_id = unwrap_singleton_tuple(recon_field_map_ref_id)
+                logging.info(f"------------>recon_field_map_ref_id: {type(recon_field_map_ref_id)}")
+                logging.info(f"===========>recon_field_map_ref_id:{json.dumps(recon_field_map_ref_id, indent=4)}")
+                match_rule_type_fetching = unwrap_singleton_tuple(match_rule_type_fetching)
+                logging.info(f"------------>match_rule_type_fetching: {type(match_rule_type_fetching)}")
+                logging.info(f"===========>match_rule_type_fetching:{json.dumps(match_rule_type_fetching, indent=4)}")
+                match_status_fetching = unwrap_singleton_tuple(match_status_fetching)
+                logging.info(f"------------>match_rule_type_fetching: {type(match_rule_type_fetching)}")
+                logging.info(f"===========>match_status_fetching:{json.dumps(match_status_fetching, indent=4)}")
+                get_recon_rule_ref_id= unwrap_singleton_tuple(get_recon_rule_ref_id)
+                logging.info(f"------------>get_recon_rule_ref_id: {type(get_recon_rule_ref_id)}")
+                logging.info(f"===========>get_recon_rule_ref_id:{json.dumps(get_recon_rule_ref_id, indent=4)}")
+                matching_ref_id_update = matching_condition_update(get_matching_condition, entity_parameters,
+                                                                   entity_matching_status, recon_field_map_ref_id,match_rule_type_fetching,match_status_fetching, get_recon_rule_ref_id)
+                logging.info(f"===========>matching_ref_id_update:{json.dumps(matching_ref_id_update, indent=4)}")
+                request_sending, name_holding = assigning_value(item, operation)
+            if entity == "event_name_creation" and operation in ["create"]:
+                recon_name = {"reconName":entity_parameters[0].get("reconName", "")}
+                reconRefId = map_notcontain_refid_collection(entity,recon_name,None)
+                logging.info(f"----------------> Removed the reconName from the entity of event_name_creation:\n{json.dumps(entity_parameters, indent=4)}")
+                update_rec_id = update_reconRefId(reconRefId,entity_parameters,entity)
+                logging.info(f"--------------- update_rec_id:,{json.dumps(update_rec_id,indent=4)}")
+                request_sending, name_holding = assigning_value(item, operation)
+            if entity == "event_setup" and operation in ["create"]:
+                recon_name = {"reconName": entity_parameters[0].get("reconName", "")}
+                reconRefId = map_notcontain_refid_collection(entity, recon_name, None)
+                # event_name = {"eventName": entity_parameters[0].get("eventName","")}
+                # event_ref_id = map_notcontain_refid_collection(entity,event_name,None)
+                update_event_id = update_reconRefId(reconRefId, entity_parameters,entity)
+                logging.info(f"--------------- update_rec_id:,{json.dumps(update_event_id, indent=4)}")
+                request_sending, name_holding = assigning_value(item, operation)
             logging.info(f"-------------->final_ref_id_holding:{final_ref_id_holding}")
         except Exception as e:
             logging.error(f"Error processing entity {entity}: {e}")

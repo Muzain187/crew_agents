@@ -4,6 +4,8 @@ source_extractor:
     i need output which is like Create 2 sources filename1,filename2
     here 2 represent no.of files under the uploaded_files folder
     exclude the extension from the csv files need only name
+
+    pass this task output to other team to get the result
   expected_output: >
     generate the text
     Ex: Create 2 sources Blotter and TP
@@ -44,16 +46,15 @@ recon_creator:
   description: >
     create a recon using the tool  uuid ex: recon_142578852125
     type should be custom recon and  if uploaded_files folder is having more than one file then <side_name1> and <side_name2>
-    if uploaded_files folder is having only one file then only <side_name1>
 
   expected_output: >
     generate the text
     Ex: Create recon <recon_name> type custom recon and side <side_name1> and <side_name2>
 
     Here <recon_name> should be unique starting with recon_
-    also <side_name1> and <side_name1> are unique name stating with side_
+    also <side_name1> and <side_name2> are unique name stating with side_
     ex: recon_142578852125
-        side_123
+        side_123,side_456
     
   agent: source_fields
 
@@ -90,29 +91,41 @@ recon_field_creator:
 
 recon_field_summay:
   description: >
-    For the given "{user_input}"
-    fetch the column header names under uploaded_files and thier respective datatype
-    if "{user_input}" contains "match on":
-      fetch the column headers value given by the user 
-      and add it under Group By
+    For the given "{user_input}" and the output from recon_field_creator:
+    Note: "{user_input}" is a text input from the user, not a file.
+    take first filename that is under uploaded_files
 
-    if "{user_input}" contains "compare"
-      fetch the column header value and their datatype given by the user
-      and add it under compare values/compare status (if column header data type is Boolean)  
+    Use the output of recon_field_creator to identify relevant column names.
+    Extract matching column headers from "{user_input}" based on these identified columns.
+
+    Then, apply the following logic:
+
+    If "{user_input}" contains the phrase "match on":
+      Extract the column names mentioned after "match on" in the user_input.
+      Add these columns under the "Group By" section.
+
+    If "{user_input}" contains the word "compare":
+      Extract the column names mentioned after "compare" in the user_input.
+      Check each column's data type:
+
+      If the column is of Boolean type, add it under "compare status".
+        Otherwise, add it under "compare values".
+
+
  
 
   expected_output: >
     generate the text
     For recon <recon_name> of side <side_name1>,<sidename2>, Map recon fields summary for 
-    <column header1> as <Group By> 
-    <column header2> as <compare values> 
-    <column header3> as <compare values>
-    <column header4> as <compare status>
+    <column header1> as Group By 
+    <column header2> as compare values
+    <column header3> as compare values
+    <column header4> as compare status
     ....
 
     here <recon_name> is something created in earlier task
     <sidename1> and <sidename2> are the sides which are mention in the previous tasks.
-    <column headers> are taken from the files that are under uploaded_files  
+    <column headers> are taken from the "{user_input}" that are under uploaded_file  
   agent: source_fields
 
 map_source_recon:
@@ -132,8 +145,8 @@ map_source_recon:
 matching_rule:
   description: >
     For the given "{user_input}"
-    create a Rule having information on sides and adding the matching conditions based on the 'match on' on column-headers
-    add match condintion only for the column which are under 'match on' in "{user_input}"
+    create a Rule having information on sides and adding the matching conditions based on the 'match on' on column-headers.
+    add match condition only for the column which are under 'match on' in "{user_input}"
  
   expected_output: >
     Create Matching Rule <rule_name>
@@ -145,7 +158,7 @@ matching_rule:
 
     here <rule_name> is something uniqueId (based on DATETIME) generated rule_DATETIME,
     <side_names> are generated previously,
-    <column-headers> are take from "{user_input}" under "match on" statement,
+    <column-header> are take based on "match on" statement from "{user_input}",
     <recon_name> is take from earlier tasks.  
   
   agent: source_fields
@@ -168,7 +181,9 @@ event_creation:
 
 task_executor_1:
   description: >
-    Understand the source_extractor  
+    Understand the source_extractor output
+    ex: create source <source_name1>,<source_name2> 
+    where <source_name1> and <source_name2> are taken from context of source_extractor 
   expected_output: >
     generate the output
     
@@ -176,7 +191,7 @@ task_executor_1:
 
 task_executor_2:
   description: >
-    Understand the source_fields_extractor  
+    Understand the source_fields_extractor output
   expected_output: >
     generate the output
 
@@ -184,7 +199,7 @@ task_executor_2:
 
 task_executor_3:
   description: >
-    Understand the recon_creator  
+    Understand the recon_creator output
   expected_output: >
     generate the output
     
@@ -192,7 +207,7 @@ task_executor_3:
 
 task_executor_4:
   description: >
-    Understand the recon_field_creator  
+    Understand the recon_field_creator output 
   expected_output: >
     generate the output
     
@@ -200,7 +215,7 @@ task_executor_4:
 
 task_executor_5:
   description: >
-    Understand the recon_field_summay  
+    Understand the recon_field_summay output
   expected_output: >
     generate the output
     
@@ -208,7 +223,7 @@ task_executor_5:
 
 task_executor_6:
   description: >
-    Understand the map_source_recon  
+    Understand the map_source_recon output
   expected_output: >
     generate the output
     
@@ -216,7 +231,7 @@ task_executor_6:
 
 task_executor_7:
   description: >
-    Understand the matching_rule  
+    Understand the matching_rule output
   expected_output: >
     generate the output
     
@@ -224,7 +239,7 @@ task_executor_7:
 
 task_executor_8:
   description: >
-    Understand the event_creation  
+    Understand the event_creation output 
   expected_output: >
     generate the output
     

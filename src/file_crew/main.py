@@ -2,6 +2,9 @@
 import sys
 import warnings
 
+import uvicorn
+import threading
+
 from datetime import datetime
 
 from file_crew.crew import FileCrew
@@ -13,12 +16,19 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
 
+def start_server():
+    uvicorn.run("file_crew.utils.main:app", host="0.0.0.0", port=8001, reload=False)
+
 def run():
     """
     Run the crew.
     """
+    # Start FastAPI in a background thread
+    server_thread = threading.Thread(target=start_server, daemon=True)
+    server_thread.start()
+    
     inputs = {
-        'user_input': 'match on Trade_Id ,compare Quantity,Price and Amount'
+        'user_input': 'match on Trade Number ,compare Quantity,Price and Amount'
     }
     
     try:

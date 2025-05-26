@@ -9,6 +9,23 @@
                 "reconTYpe": "string"
             }
         },
+        "matching_rule_name": {
+            "method" : "post",
+            "endpoint" : "http://18.206.131.186:8083/api/recon/static/matching-rule/name",
+            "description": "create a new rule name",
+            "body": {
+                "matchingRuleName" : "string",
+                "reconName" : "string"
+            }
+        },
+        "matching_rule_creation" : {
+            "method" : "post",
+            "endpoint": "http://18.206.131.186:8083/api/recon/rules/mapping/matching-rules",
+            "body" : {
+                "reconName" : "string",
+                "sourceName": "string"
+            }
+        },
         "recon_side_configure":{
             "url" : "http://18.206.131.186:8083/api/recon/recon-setup-settings",
              "method": "POST",
@@ -68,15 +85,96 @@
             "body": {
                 "sourceName": "string"
             }
+        },
+        "get_rule_ref_id": {
+            "url": "http://18.206.131.186:8083/api/recon/static/matching-rule/name?reconName=",
+            "method": "GET",
+            "description": "Get the rule ref id.",
+            "body": {
+                "reconName": "string"
+            }
+        },
+        "group_matching_condition": {
+            "url": "http://18.206.131.186:8083/api/recon/rules/mapping/matching-rules",
+            "method": "POST",
+            "description": "Create a new rule",
+            "body": {
+                "sourceName": "string",
+                "reconName": "string",
+                "field_name":"string",
+                "source_name": "string"
+            }
+        },
+        "twoside_condition": {
+              "url": "http://18.206.131.186:8083/api/recon/rules/mapping/matching-rules",
+                "method": "POST",
+                "description": "Create a two side condition"
+        },
+        "get_matching_condition": {
+            "url": "http://18.206.131.186:8083/api/recon/default/st-matching-conditions",
+            "method": "GET",
+            "description": "create a new matching rule"
+        },
+        "get_fixed_condition": {
+            "url": "http://18.206.131.186:8083/api/recon/default/st-fixed-conditions",
+            "method": "GET",
+            "description": "create a new fixed rule"
+        },
+        "matching_rule_type_fetching": {
+            "url": "http://18.206.131.186:8083/api/recon/default/st-filters?dropdownType=matching_rule_type",
+            "method": "GET",
+            "description": "Fetching corresponding matching rule type"
+        },
+        "match_status": {
+            "url": "http://18.206.131.186:8083/api/recon/default/st-recon-match-status-filter",
+            "method": "GET",
+            "description": "Collecting a corresponding matching value."
+        },
+        "event_name_creation": {
+            "url": "http://18.206.131.186:8083/api/recon/event/setup",
+            "method": "POST",
+            "description": "Create a new event"
+        },
+        "event_setup": {
+            "url": "http://18.206.131.186:8083/api/recon/event/setup",
+            "method": "PUT",
+            "description": "Set up the new event"
         }
     },
     "read" : {
         "reference_id" : {
-            "url": "http://127.0.0.1:8002/engine/ref-ids",
+            "url": "http://127.0.0.1:8001/engine/ref-ids",
             "method": "POST",
             "description": "Get a existing name ref_id."
         }
+    },
+    "update": {
+        "recon_summary": {
+            "url": "http://18.206.131.186:8083/api/recon/recon-configuration/recon-summary",
+            "method": "POST",
+             "description": "Update latest summary name.",
+            "body": {
+                "reconName": "string",
+                "summaryName": "string",
+                "field_name": "string",
+                "recon_name": "string"
+            }
+        },
+        "get_summary_ref_id": {
+            "url": "http://18.206.131.186:8083/api/recon/recon-setup-configuration?reconName=",
+            "method": "GET",
+             "description": "Get the map ref id.",
+            "body": {
+                "reconName": "string"
+            }
+        },
+        "side_ref_id": {
+            "url": "http://18.206.131.186:8083/api/recon/recon-setup-settings?reconName=",
+            "method" : "GET",
+            "description": "Get the side name ref id",
+            "body": {
+                "reconName": "string"
+            }
+        }
     }
 }
-
-

@@ -5,8 +5,10 @@ from dotenv import find_dotenv, load_dotenv
 import google.generativeai as genai
 import logging
 from typing import Any
-load_dotenv(find_dotenv(".env"))
-
+# load_dotenv(find_dotenv(".env"))
+env_path = find_dotenv(".env")
+load_dotenv(env_path)
+print("Loaded .env file from:", env_path)
 
 class AppConfig(BaseSettings):
     PROJECT_NAME: str = 'vm-agent'
@@ -43,4 +45,5 @@ logging.info(f"--->api key : {apikey_config.GOOGLE_API_KEY}")
 pg_config = PostgresSQLConnectionConfig()
 access_token = FetchToken()
 logging.info(f"--->access token : {access_token.token}")
+print(f"--->access token : {access_token.token}")
 

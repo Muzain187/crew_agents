@@ -5,11 +5,14 @@ description = "file_crew using crewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.13"
 dependencies = [
+    "crewai-chat-ui>=0.1.2",
     "crewai[tools]>=0.114.0,<1.0.0",
     "google-generativeai>=0.8.5",
     "langchain>=0.3.24",
     "langchain-google-genai>=2.0.10",
     "loguru>=0.7.3",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0"
 ]
 
 [project.scripts]

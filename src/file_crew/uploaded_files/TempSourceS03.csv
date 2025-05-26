@@ -1,4 +1,4 @@
-Trade ID,Trade Date,Settlement Date,Fund,ISIN,Quantity,Price,Amount
+Trade Number,Trade Date,Settlement Date,Fund,ISIN,Quantity,Price,Amount
 SFG12736,29-04-2025,02-05-2025,F63,ISIN1,10000,100.27,1002700.00
 SFG12737,29-04-2025,02-05-2025,F63,ISIN2,200,2.67,534.00
 SFG12738,29-04-2025,02-05-2025,F63,ISIN3,750,3.9,2925.00

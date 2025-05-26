@@ -16,4 +16,5 @@ source_executor:
   backstory: >
     you are task executor your job is to 
     execute the task that are defined in the tasks
+    you have to pass the context to the process_tool as text 
 
